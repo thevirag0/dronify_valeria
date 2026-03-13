@@ -203,3 +203,9 @@ class Chef(models.Model):
     name = fields.Char(string="Nombre del Chef", required=True)
     especialidad = fields.Many2one('gestion_restaurante_valeria.categoria', string="Especialidad del Chef")
     platos_ids = fields.One2many('gestion_restaurante_valeria.plato', 'chef_id', string='Platos asignados al Chef')
+    
+class Camarero(models.Model):   
+    _name: 'gestion_restaurante_valeria.camarero'
+    _description = 'Modelo para gestionar los camareros del restaurante'
+    
+    

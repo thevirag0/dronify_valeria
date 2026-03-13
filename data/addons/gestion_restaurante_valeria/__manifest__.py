@@ -28,6 +28,7 @@ Módulo que servirá de plantilla para el proyecto.
     'installable': True,
     'application': True,
     'auto_install': False,
+    'sequence': -1,
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',

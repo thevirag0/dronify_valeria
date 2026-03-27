@@ -189,8 +189,21 @@
         </form>
       </field>
     </record>
-
-
+     <!-- vista camarero -->
+    <record id="gestion_restaurante_valeria.camarero_list_view" model="ir.ui.view">
+      <field name="name">gestion_restaurante_valeria.camarero.list</field>
+      <field name="model">gestion_restaurante_valeria.camarero</field>
+      <field name="arch" type="xml">
+        <list>
+          <field name="name"/>
+          <field name="turno"/>
+          <field name="seccion"/>
+        </list>
+      </field>
+      </record>
+     
+    
+    
     <!-- la acción de la ventana - define qué hace -->
 
     <record model="ir.actions.act_window" id="gestion_restaurante_valeria.action_window">
@@ -228,6 +241,12 @@
       <field name="view_mode">list,form</field>
     </record>
 
+    <record model="ir.actions.act_window" id="camarero_action">
+      <field name="name">Camareros</field>
+      <field name="res_model">gestion_restaurante_valeria.camarero</field>
+      <field name="view_mode">list,form</field>
+    </record>
+
     <!-- AÑADIR MENÚS -->
 
     <!-- server action to the one above -->
@@ -248,7 +267,7 @@
 
     <menuitem name="Categorías" id="menu_categorias" parent="gestion_restaurante_valeria.menu_main" action="categoria_action" sequence="20"/>
     <menuitem name="Chefs" id="menu_chefs" parent="gestion_restaurante_valeria.menu_main" action="chef_action" sequence="30"/>
-
+    <menuitem name="Camareros" id="menu_camareros" parent="gestion_restaurante_valeria.menu_main" action="camarero_action" sequence="40"/>
     <!-- actions -->
     <!--
     <menuitem name="List" id="gestion_restaurante_valeria.menu_1_list" parent="gestion_restaurante_valeria.menu_1" action="gestion_restaurante_valeria.action_window"/>

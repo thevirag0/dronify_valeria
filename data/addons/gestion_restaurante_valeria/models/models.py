@@ -125,6 +125,15 @@ class Menu(models.Model):
     precio_total = fields.Float(string="Precio Total", compute="_compute_precio_total", store=True)
     creado_por = fields.Many2one('res.users', string="Creado por", default=lambda self: self.env.user, readonly=True)
     dias_disponible = fields.Integer(string="Días disponibles", default=7)
+    camarero_menu = fields.Many2many(
+        comodel_name='gestion_restaurante_valeria.camarero',
+        relation='relacion_restaurante_camareros_menus',
+        column1='menus_especialidad',
+        column2='camarero_menu',
+        string='Menús que puede servir'
+        
+    )
+    
     
     # método para calcular fecha fin del menú
     @api.depends('fecha_inicio', 'dias_disponible')
@@ -204,8 +213,20 @@ class Chef(models.Model):
     especialidad = fields.Many2one('gestion_restaurante_valeria.categoria', string="Especialidad del Chef")
     platos_ids = fields.One2many('gestion_restaurante_valeria.plato', 'chef_id', string='Platos asignados al Chef')
     
-class Camarero(models.Model):   
-    _name: 'gestion_restaurante_valeria.camarero'
+class Camarero(models.Model):
+    _name= 'gestion_restaurante_valeria.camarero'
+    _inherit = 'res.partner'
     _description = 'Modelo para gestionar los camareros del restaurante'
     
+    es_camarero = fields.Boolean(string="Camarero:", default=True)
+    turno = fields.Selection([('mañana', 'Mañana'), ('tarde', 'Tarde'), ('noche', 'Noche')])
+    seccion = fields.Char(string = "Zona asignada")
+    menus_especialidad = fields.Many2many(
+        comodel_name='gestion_restaurante_valeria.menu',
+        relation='relacion_restaurante_camareros_menus',
+        column1='menus_especialidad',
+        column2='camarero_menu',
+        string='Menús que puede servir'
+        
+    )
     

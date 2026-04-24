@@ -1,77 +1,74 @@
-# Preparación para entorno de desarrollo
+# Modelo de Datos - Dronify
 
-En primer lugar clonar repositorio base de ejemplo y después:
+## Diagrama ER
 
-## Cambios en los fichero de configuración
+```mermaid
+erDiagram
+    PILOTO }o--o{ DRON : "piloto_autorizado_ids / dron_autorizado_ids"
+    
+    CLIENTE ||--o{ PAQUETE : "cliente_id"
+    PAQUETE }o--|| VUELO : "vuelo_id"
+    
+    DRON ||--o{ VUELO : "dron_id"
+    PILOTO ||--o{ VUELO : "piloto_id"
+    
+    ZONA ||--o{ VUELO : "zona_id"
+    
+    VUELO ||--o{ PAQUETE : "paquetes_ids"
 
-Una vez hecho el clonado **antes de restauar la base de datos** deben efectuarse cambios en los siguientes ficheros:
-
-- `docker-compose.yml`: Cambiar todas las ocurencias de los nombre de los contenedores
-  - por ejemplo, de `odoo_dev_dam` a `odoo_dev_sergio`
-  - si se mantiene la raiz del nombre, solo reemplazar `dav` por `sergio`
-- `data/odoo_config/odoo.conf`: 
-  - En la línea 19, poner el mismo valor que en el fichero anterior en `postgres_dev_dam`
-- `script/restore.sh` y `script/backup.sh`: actualizar las siguientes variables que se encuentran al principio de los scripts: 
-  ```bash
-  PG_CONTAINER="postgres_dev_dam"   # Nombre del contenedor de Postgres
-  ODOO_CONTAINER="odoo_dev_dam"     # Nombre del contenedor de Odoo
-  PG_USER="odoo"                    # Usuario de la BD Postgres
-  DB_NAME="odoo"                    # Nombre de la BD a respaldar 
-  ```
-
-## Copia y restauración
-
-Una vez se han hecho todos los cambios. 
-
-### Para hacer copia
-
-Para guardar los cambios
-
-```bash
-bash scripts/backup.sh
-
-git add .                           # usar sudo si da errores de permisos
-git commit -m "Comentario que sea"
-git push
-```
-
-### para restaurar copia
-
-```bash
-git pull    # si te tienes que descargar desde tu repositorio la última versión.
-
-bash scripts/restore.sh
-```
-
-## fichero `.gitignore`
-
-Se debe preparar el fichero para no copiar en GitHub ficheros innecesarios que hagan la copia más pesada:
-
-```bash
-# ----------------------------------------------------------------
-# IGNORAR TODOS LOS DATOS PERSISTENTES (¡MUY IMPORTANTE!)
-# ----------------------------------------------------------------
-
-# Ignorar los datos de la base de datos PostgreSQL
-/data/dataPostgreSQL/
-
-# Ignorar el filestore de Odoo (adjuntos, imágenes, etc.)
-/data/odoo/filestore/
-
-# Ignorar las sesiones de Odoo
-/data/odoo/sessions/
-
-# ----------------------------------------------------------------
-# Archivos de sistema y Python
-# ----------------------------------------------------------------
-
-# Ignorar archivos compilados de Python
-__pycache__/
-*.pyc
-
-# Ignorar archivos de sistema operativo
-.DS_Store
-
-# Ignorar carpetas de IDEs (opcional pero recomendado)
-.vscode/
-```
+    CLIENTE {
+        int id PK
+        string name
+        boolean es_cliente "True"
+        boolean es_vip
+        boolean es_piloto
+        string licencia "obligatorio si es_piloto=True"
+    }
+    
+    PILOTO {
+        int id PK
+        string name
+        boolean es_cliente
+        boolean es_vip
+        boolean es_piloto "True"
+        string licencia "obligatorio"
+    }
+    
+    DRON {
+        int id PK
+        string name
+        float capacidad_max "obligatorio"
+        int bateria "default: 100, 0-100%"
+        string estado "disponible/vuelo/taller"
+    }
+    
+    PAQUETE {
+        int id PK
+        string codigo "autogenerado, readonly"
+        string name "obligatorio"
+        float peso "obligatorio"
+        int cliente_id FK "obligatorio, es_cliente=True"
+        int vuelo_id FK "readonly"
+        string dron_relacionado "related, readonly"
+    }
+    
+    VUELO {
+        int id PK
+        string codigo "autogenerado, readonly"
+        string name "default: YYYYMMDD_Vuelo, obligatorio"
+        int dron_id FK "obligatorio"
+        int piloto_id FK "obligatorio, solo pilotos"
+        int zona_id FK "obligatorio"
+        boolean preparado
+        boolean realizado
+        float peso_total "computado"
+        float consumo_estimado "computado"
+    }
+    
+    ZONA {
+        int id PK
+        string name "obligatorio"
+        float distancia_km "default: 1.0"
+        int nivel_riesgo "1-5, obligatorio"
+        float tarifa_base
+    }

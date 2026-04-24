@@ -1,6 +1,6 @@
 services:
   #Definimos el servicio Web, en este caso Odoo
-  odoo_dev_vb:
+  odoo_dronify_valeria:
     #Indicamos que imagen de Docker Hub utilizaremos
     image: odoo:19
     container_name: odoo_dronify_valeria

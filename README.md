@@ -4,13 +4,13 @@
 
 ```mermaid
 erDiagram
-    PILOTO }o--o{ DRON : "piloto_autorizado_ids / dron_autorizado_ids"
+    CLIENTE }o--o{ DRON : "piloto_autorizado_ids / dron_autorizado_ids"
     
     CLIENTE ||--o{ PAQUETE : "cliente_id"
     PAQUETE }o--|| VUELO : "vuelo_id"
     
     DRON ||--o{ VUELO : "dron_id"
-    PILOTO ||--o{ VUELO : "piloto_id"
+    CLIENTE ||--o{ VUELO : "piloto_id"
     
     ZONA ||--o{ VUELO : "zona_id"
     

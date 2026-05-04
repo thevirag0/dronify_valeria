@@ -25,15 +25,6 @@ erDiagram
         string licencia "obligatorio si es_piloto=True"
     }
     
-    PILOTO {
-        int id PK
-        string name
-        boolean es_cliente
-        boolean es_vip
-        boolean es_piloto "True"
-        string licencia "obligatorio"
-    }
-    
     DRON {
         int id PK
         string name

@@ -63,3 +63,10 @@ erDiagram
         int nivel_riesgo "1-5, obligatorio"
         float tarifa_base
     }
+
+
+## Viernes 08/05 - Clase
+
++ Modificado el manifest para incluir información relevante, y application=True
++ Añadidos los modelos básicos + relaciones entre tablas. Faltarían comprobaciones y campos calculados.
+

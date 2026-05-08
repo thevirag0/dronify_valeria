@@ -70,3 +70,7 @@ erDiagram
 + Modificado el manifest para incluir información relevante, y application=True
 + Añadidos los modelos básicos + relaciones entre tablas. Faltarían comprobaciones y campos calculados.
 
+### Viernes 08/05 - Casa
+
++ Modelos listos, con relaciones y constrains implementadas.
+

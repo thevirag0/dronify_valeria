@@ -64,7 +64,7 @@ erDiagram
         float tarifa_base
     }
 
-
+´´´
 ## Viernes 08/05 - Clase
 
 + Modificado el manifest para incluir información relevante, y application=True

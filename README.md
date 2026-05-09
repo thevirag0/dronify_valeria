@@ -74,3 +74,8 @@ erDiagram
 
 + Modelos listos, con relaciones y constrains implementadas.
 
+## Sábado 09/05
+
++ Vista completa de Paquete
++ Vista form + tree de Cliente y Piloto. Faltan cosas aún.
+

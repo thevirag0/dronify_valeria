@@ -1,15 +1,15 @@
 <odoo>
   <data>
-    <!-- VISTA CLIENTE - TREE -->
-    <record id="dronify_cliente_tree" model="ir.ui.view">
-      <field name="name">dronify.cliente.tree</field>
+    <!-- VISTA CLIENTE - list -->
+    <record id="dronify_cliente_list" model="ir.ui.view">
+      <field name="name">dronify.cliente.list</field>
       <field name="model">res.partner</field>
       <field name="arch" type="xml">
-        <tree>
+        <list>
           <field name="name"/>
           <field name="es_cliente"/>
-          <field name="es_vip" attrs="{'invisible': [('es_cliente', '=', False)]}"/>
-        </tree>
+          <field name="es_vip"/>
+        </list>
       </field>
     </record>
     <!-- VISTA CLIENTE - FORM -->
@@ -22,7 +22,7 @@
             <group>
               <field name="name"/>
               <field name="es_cliente"/>
-              <field name="es_vip" attrs="{'invisible': [('es_cliente', '=', False)]}"/>
+              <field name="es_vip"/>
             </group>
           </sheet>
         </form>
@@ -32,21 +32,21 @@
     <record id="dronify_cliente_action" model="ir.actions.act_window">
       <field name="name">Clientes</field>
       <field name="res_model">res.partner</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">list,form</field>
       <field name="domain">[('es_cliente', '=', True)]</field>
-      <field name="view_id" ref="dronify_cliente_tree"/>
+      <field name="view_id" ref="dronify_cliente_list"/>
     </record>
-    <!-- VISTA PILOTO - TREE -->
-    <record id="dronify_piloto_tree" model="ir.ui.view">
-      <field name="name">dronify.piloto.tree</field>
+    <!-- VISTA PILOTO - list -->
+    <record id="dronify_piloto_list" model="ir.ui.view">
+      <field name="name">dronify.piloto.list</field>
       <field name="model">res.partner</field>
       <field name="arch" type="xml">
-        <tree>
+        <list>
           <field name="name"/>
           <field name="es_piloto"/>
-          <field name="es_vip" attrs="{'invisible': [('es_cliente', '=', False)]}"/>
+          <field name="es_vip"/>
           <field name="licencia"/>
-        </tree>
+        </list>
       </field>
     </record>
     <!-- VISTA PILOTO - FORM -->
@@ -58,9 +58,9 @@
           <sheet>
             <group>
               <field name="name"/>
-              <field name="es_piloto"/>
-              <field name="es_vip" attrs="{'invisible': [('es_cliente', '=', False)]}"/>
-              <field name="licencia"attrs="{'invisible': [('es_piloto', '=', False)], 'required': [('es_piloto', '=', True)]}"/>/>
+              <field name="es_piloto" readonly="1"/>
+              <field name="es_vip"/>
+              <field name="licencia"/>
             </group>
             <group string="Drones autorizados">
               <field name="dron_autorizado_ids" widget="many2many_tags"/>
@@ -73,36 +73,109 @@
     <record id="dronify_piloto_action" model="ir.actions.act_window">
       <field name="name">Piloto</field>
       <field name="res_model">res.partner</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">list,form</field>
       <field name="domain">[('es_piloto', '=', True)]</field>
-      <field name="view_id" ref="dronify_piloto_tree"/>
+      <field name="view_id" ref="dronify_piloto_list"/>
     </record>
     <!-- VISTA PAQUETE -->
-    <record id="dronify_paquete_tree" model="ir.ui.view">
-      <field name="name">dronify.paquete.tree</field>
+    <record id="dronify_paquete_list" model="ir.ui.view">
+      <field name="name">dronify.paquete.list</field>
       <field name="model">dronify.paquete</field>
       <field name="arch" type="xml">
-        <tree>
+        <list>
           <field name="codigo"/>
           <field name="name"/>
           <field name="peso"/>
           <field name="cliente_id"/>
           <field name="vuelo_id"/>
           <field name="dron_relacionado"/>
-        </tree>
+        </list>
       </field>
     </record>
     <!-- ACTION PAQUETE -->
     <record id="dronify_paquete_action" model="ir.actions.act_window">
       <field name="name">Paquetes</field>
       <field name="res_model">dronify.paquete</field>
-      <field name="view_mode">tree</field>
-      <field name="view_id" ref="dronify_paquete_tree"/>
+      <field name="view_mode">list</field>
+      <field name="view_id" ref="dronify_paquete_list"/>
     </record>
-    <!-- MENÚ ROOT + CLIENTES + PAQUETE -->
+    <!-- VISTA DRON - list -->
+    <record id="dronify_dron_list" model="ir.ui.view">
+      <field name="name">dronify.dron.list</field>
+      <field name="model">dronify.dron</field>
+      <field name="arch" type="xml">
+        <list decoration-danger="bateria &lt; 25 or estado == 'en_vuelo'" 
+          decoration-success="estado == 'disponible'" 
+          decoration-warning="estado == 'taller'">
+          <field name="name"/>
+          <field name="capacidad_max"/>
+          <field name="bateria" widget="progressbar"/>
+          <field name="estado" widget="badge"/>
+        </list>
+      </field>
+    </record>
+    <!-- ACTION DRON -->
+    <record id="dronify_dron_action" model="ir.actions.act_window">
+      <field name="name">Drones</field>
+      <field name="res_model">dronify.dron</field>
+      <field name="view_mode">list</field>
+      <field name="view_id" ref="dronify_dron_list"/>
+    </record>
+    <!-- VISTA ZONA - list -->
+    <record id="dronify_zona_list" model="ir.ui.view">
+      <field name="name">dronify.zona.list</field>
+      <field name="model">dronify.zona</field>
+      <field name="arch" type="xml">
+        <list
+            decoration-success="nivel_riesgo in ('1','2')"
+            decoration-info="nivel_riesgo == '3'"
+            decoration-warning="nivel_riesgo == '4'"
+            decoration-danger="nivel_riesgo == '5'">
+          <field name="name"/>
+          <field name="distancia_km"/>
+          <field name="nivel_riesgo" widget="badge"/>
+          <field name="tarifa_base"/>
+        </list>
+      </field>
+    </record>
+    <!-- ACTION ZONA -->
+    <record id="dronify_zona_action" model="ir.actions.act_window">
+      <field name="name">Zonas</field>
+      <field name="res_model">dronify.zona</field>
+      <field name="view_mode">list</field>
+      <field name="view_id" ref="dronify_zona_list"/>
+    </record>
+    <!-- VISTA VUELOS - list -->
+    <record id="dronify_vuelo_list" model="ir.ui.view">
+      <field name="name">dronify.vuelo.list</field>
+      <field name="model">dronify.vuelo</field>
+      <field name="arch" type="xml">
+        <list>
+          <field name="codigo"/>
+          <field name="name"/>
+          <field name="dron_id"/>
+          <field name="piloto_id"/>
+          <field name="peso_total"/>
+          <field name="consumo_estimado" widget="percentpie"/>
+          <field name="preparado" widget="boolean" class="text-center"/>
+          <field name="realizado" widget="boolean" class="text-center"/>
+        </list>
+      </field>
+    </record>
+    <!-- ACTION VUELOS list -->
+    <record id="dronify_vuelo_action" model="ir.actions.act_window">
+      <field name="name">Vuelos</field>
+      <field name="res_model">dronify.vuelo</field>
+      <field name="view_mode">list,form</field>
+      <field name="view_id" ref="dronify_vuelo_list"/>
+    </record>
+    <!-- MENÚ ROOT + RESTO -->
     <menuitem id="dronify_menu_root" name="Dronify" sequence="10"/>
     <menuitem id="dronify_menu_clientes" name="Clientes" parent="dronify_menu_root" action="dronify_cliente_action" sequence="10"/>
     <menuitem id="dronify_menu_pilotos" name="Pilotos" parent="dronify_menu_root" action="dronify_piloto_action" sequence="10"/>
     <menuitem id="dronify_menu_paquetes" name="Paquetes" parent="dronify_menu_root" action="dronify_paquete_action" sequence="20"/>
+    <menuitem id="dronify_menu_drones" name="Drones" parent="dronify_menu_root" action="dronify_dron_action" sequence="20"/>
+    <menuitem id="dronify_menu_zonas" name="Zonas" parent="dronify_menu_root" action="dronify_zona_action" sequence="20"/>
+    <menuitem id="dronify_menu_vuelos" name="Vuelos" parent="dronify_menu_root" action="dronify_vuelo_action" sequence="20"/>
   </data>
 </odoo>

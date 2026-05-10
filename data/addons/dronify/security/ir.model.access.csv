@@ -1,2 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_dronify_dronify,dronify.dronify,model_dronify_dronify,base.group_user,1,1,1,1
+access_dronify_dron_user,dronify.dron,model_dronify_dron,base.group_user,1,1,1,1
+access_dronify_vuelo_user,dronify.vuelo,model_dronify_vuelo,base.group_user,1,1,1,1
+access_dronify_paquete_user,dronify.paquete,model_dronify_paquete,base.group_user,1,1,1,1
+access_dronify_zona_user,dronify.zona,model_dronify_zona,base.group_user,1,1,1,1

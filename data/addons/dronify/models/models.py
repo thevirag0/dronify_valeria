@@ -42,6 +42,7 @@ class Dron(models.Model):
         for dron in self:
             if dron.bateria < 0 or dron.bateria > 100:
                 raise ValidationError("Error: La batería debe estar entre 0% y 100%")
+    
             
 class Vuelo(models.Model):
     _name = "dronify.vuelo"

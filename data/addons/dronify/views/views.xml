@@ -45,7 +45,7 @@
           <field name="name"/>
           <field name="es_piloto"/>
           <field name="es_vip"/>
-          <field name="licencia"/>
+          <field name="licencia" domain="[('es_piloto', '=', True)]"/>
         </list>
       </field>
     </record>
@@ -160,6 +160,33 @@
           <field name="preparado" widget="boolean" class="text-center"/>
           <field name="realizado" widget="boolean" class="text-center"/>
         </list>
+      </field>
+    </record>
+    <!-- VISTA VUELOS - form -->
+    <record id="dronify_vuelo_form" model="ir.ui.view">
+      <field name="name">dronify.vuelo.form</field>
+      <field name="model">dronify.vuelo</field>
+      <field name="arch" type="xml">
+        <form>
+          <header>
+            <!-- Botones de acción -->
+            <button name="action_preparar_vuelo" string="Preparar vuelo" type="object" class="oe_highlight"/>
+            <button name="action_desbloquear_vuelo" string="Desbloquear vuelo" type="object" class="oe_highlight"/>
+            <button name="action_finalizar_vuelo" string="Finalizar vuelo" type="object" class="oe_highlight"/>
+          </header>
+          <sheet>
+            <group>
+              <field name="codigo"/>
+              <field name="name"/>
+              <field name="dron_id"/>
+              <field name="piloto_id"/>
+              <field name="peso_total"/>
+              <field name="consumo_estimado" widget="percentpie"/>
+              <field name="preparado" widget="boolean" class="text-center"/>
+              <field name="realizado" widget="boolean" class="text-center"/>
+            </group>
+          </sheet>
+        </form>
       </field>
     </record>
     <!-- ACTION VUELOS list -->

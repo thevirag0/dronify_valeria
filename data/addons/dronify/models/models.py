@@ -140,6 +140,18 @@ class Vuelo(models.Model):
             #usar funcion
             consumo = logica_dronify.calcular_consumo_vuelo(peso_total=peso_total, distancia_total=distancia, riesgo_valor=riesgo, es_vip=es_vip)
             vuelo.consumo_estimado = consumo
+    #actions
+    #action para preparar vuelo
+    def action_preparar_vuelo(self):
+        for vuelo in self:
+            if not vuelo.dron_id or not vuelo.piloto_id:
+                raise ValidationError("Faltan dron o piloto")
+            if vuelo.peso_total > vuelo.dron_id.capacidad_max:
+                raise ValidationError("El peso de la carga supera la capacidad máxima de carga del dron.")
+            if vuelo.dron_id.bateria < vuelo.consumo_estimado:
+                raise ValidationError("El porcentaje de batería es demasiado bajo para realizar el trayecto.")
+            if vuelo.piloto_id not in vuelo.dron_id.piloto_autorizado_ids:
+                raise ValidationError("El piloto no está autorizado para realizar el vuelo.")
     
     
 class Paquete(models.Model):

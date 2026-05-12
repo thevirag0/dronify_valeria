@@ -48,8 +48,8 @@ class Vuelo(models.Model):
     _name = "dronify.vuelo"
     _description = "Modelo para gestionar vuelos"
     
-    codigo = fields.Char(string="Código", readonly=True)
-    name = fields.Char(string="Nombre", required=True) #tiene default
+    codigo = fields.Char(string="Código", compute="_get_codigo_vuelo", readonly=True)
+    name = fields.Char(string="Nombre", compute="_compute_nombre_vuelo", required=True) #tiene default
     preparado = fields.Boolean(string="Preparado")
     realizado = fields.Boolean(string="Realizado")
     peso_total = fields.Float(string="Peso total", compute="_compute_peso_total", store=True) #computado
@@ -140,6 +140,20 @@ class Vuelo(models.Model):
             #usar funcion
             consumo = logica_dronify.calcular_consumo_vuelo(peso_total=peso_total, distancia_total=distancia, riesgo_valor=riesgo, es_vip=es_vip)
             vuelo.consumo_estimado = consumo
+    
+    #metodo para computar codigo
+    @api.depends()
+    def _compute_codigo_vuelo(self):
+        for vuelo in self:
+            vuelo.codigo = fields.Date.context_today(self).strftime('%Y%m%d%H%M%S')
+    
+    #metodo para computar nombre
+    @api.depends()
+    def _compute_nombre_vuelo(self):
+        for vuelo in self:
+            date = fields.Date.context_today(self).strftime('%Y%m%d')
+            vuelo.name = f"{date}_Vuelo"
+    
     #actions
     #action para preparar vuelo
     def action_preparar_vuelo(self):
@@ -153,12 +167,11 @@ class Vuelo(models.Model):
             if vuelo.piloto_id not in vuelo.dron_id.piloto_autorizado_ids:
                 raise ValidationError("El piloto no está autorizado para realizar el vuelo.")
     
-    
 class Paquete(models.Model):
     _name = "dronify.paquete"
     _description = "Modelo para gestionar paquetes"
     
-    codigo = fields.Char(string="Código", readonly=True) #autogenerado
+    codigo = fields.Char(string="Código", compute="_compute_codigo_paquete", readonly=True) #autogenerado
     name = fields.Char(string="Nombre", required=True)
     peso = fields.Float(string="Peso", required=True)
     cliente_id = fields.Many2one('res.partner', string="Cliente", required=True)
@@ -181,6 +194,12 @@ class Paquete(models.Model):
                 raise ValidationError(
                     f"Error: El paquete con código {paquete.codigo} no tiene un peso válido."
                 )
+                
+    #campo computado para generar códigos
+    @api.depends()
+    def _compute_codigo_paquete(self):
+        for paquete in self:
+            paquete.codigo = fields.Date.context_today(self).strftime('%Y%m%d%H%M%S')
                 
 class Zona(models.Model):
     _name = "dronify.zona"

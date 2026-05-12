@@ -35,6 +35,7 @@
       <field name="view_mode">list,form</field>
       <field name="domain">[('es_cliente', '=', True)]</field>
       <field name="view_id" ref="dronify_cliente_list"/>
+      <field name="context">{'default_es_cliente': True}</field>
     </record>
     <!-- VISTA PILOTO - list -->
     <record id="dronify_piloto_list" model="ir.ui.view">
@@ -76,6 +77,7 @@
       <field name="view_mode">list,form</field>
       <field name="domain">[('es_piloto', '=', True)]</field>
       <field name="view_id" ref="dronify_piloto_list"/>
+      <field name="context">{'default_es_piloto': True}</field>
     </record>
     <!-- VISTA PAQUETE -->
     <record id="dronify_paquete_list" model="ir.ui.view">
@@ -195,6 +197,36 @@
       <field name="res_model">dronify.vuelo</field>
       <field name="view_mode">list,form</field>
       <field name="view_id" ref="dronify_vuelo_list"/>
+    </record>
+    <!-- VISTA VUELOS - FORM -->
+    <record id="dronify_vuelo_form" model="ir.ui.view">
+      <field name="name">dronify.vuelo.form</field>
+      <field name="model">dronify.vuelo</field>
+      <field name="arch" type="xml">
+        <form>
+          <header>
+            <button name="action_preparar_vuelo"/>
+            <!-- implementar -->
+            <button name="action_desbloquear_vuelo"/>
+            <!-- implementar -->
+            <button name="action_finalizar_vuelo"/>
+            <!-- implementar -->
+          </header>
+          <sheet>
+            <group string="Planificación">
+              <!-- name, dron_id, piloto_id, zona_id -->
+            </group>
+            <group string="Estado y Control">
+              <!-- preparado, realizado, peso_total, consumo_estimado -->
+            </group>
+            <notebook>
+              <page string="Paquetes">
+                <!-- one2many paquetes_ids -->
+              </page>
+            </notebook>
+          </sheet>
+        </form>
+      </field>
     </record>
     <!-- MENÚ ROOT + RESTO -->
     <menuitem id="dronify_menu_root" name="Dronify" sequence="10"/>

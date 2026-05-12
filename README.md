@@ -86,3 +86,9 @@ erDiagram
 + Faltan: actions para los botones del header de Vuelo, crear formulario para Vuelo
 
 + Faltan: perfeccionar las vistas para que muestren datos o los oculten según las condiciones.
+
+## Martes 12/05
+
++ Dominios actualizados
++ Creación de códigos + nombre compute hechos
++ Datos de prueba creados (IA)

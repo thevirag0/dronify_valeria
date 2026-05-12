@@ -1,30 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-<!--
-          <record id="object0" model="dronify.dronify">
-            <field name="name">Object 0</field>
-            <field name="value">0</field>
-          </record>
-
-          <record id="object1" model="dronify.dronify">
-            <field name="name">Object 1</field>
-            <field name="value">10</field>
-          </record>
-
-          <record id="object2" model="dronify.dronify">
-            <field name="name">Object 2</field>
-            <field name="value">20</field>
-          </record>
-
-          <record id="object3" model="dronify.dronify">
-            <field name="name">Object 3</field>
-            <field name="value">30</field>
-          </record>
-
-          <record id="object4" model="dronify.dronify">
-            <field name="name">Object 4</field>
-            <field name="value">40</field>
-          </record>
--->
-    </data>
+  <data noupdate="1">
+    <!-- CLIENTES -->
+    <record id="demo_cliente_juan" model="res.partner">
+      <field name="name">Juan García López</field>
+      <field name="es_cliente">True</field>
+      <field name="es_vip">False</field>
+      <field name="es_piloto">False</field>
+      <field name="email">juan@example.com</field>
+    </record>
+    <record id="demo_cliente_maria_vip" model="res.partner">
+      <field name="name">María Rodríguez - VIP</field>
+      <field name="es_cliente">True</field>
+      <field name="es_vip">True</field>
+      <field name="es_piloto">False</field>
+      <field name="email">maria@example.com</field>
+    </record>
+    <record id="demo_cliente_carlos" model="res.partner">
+      <field name="name">Carlos Martínez</field>
+      <field name="es_cliente">True</field>
+      <field name="es_vip">False</field>
+      <field name="es_piloto">False</field>
+      <field name="email">carlos@example.com</field>
+    </record>
+    <!-- PILOTOS -->
+    <record id="demo_piloto_ana" model="res.partner">
+      <field name="name">Ana Fernández - Piloto</field>
+      <field name="es_cliente">False</field>
+      <field name="es_piloto">True</field>
+      <field name="licencia">LIC-2024-001</field>
+      <field name="email">ana.piloto@dronify.com</field>
+    </record>
+    <record id="demo_piloto_luis" model="res.partner">
+      <field name="name">Luis Sánchez - Piloto</field>
+      <field name="es_cliente">False</field>
+      <field name="es_piloto">True</field>
+      <field name="licencia">LIC-2024-002</field>
+      <field name="email">luis.piloto@dronify.com</field>
+    </record>
+    <record id="demo_piloto_sara" model="res.partner">
+      <field name="name">Sara López - Piloto VIP</field>
+      <field name="es_cliente">False</field>
+      <field name="es_piloto">True</field>
+      <field name="es_vip">True</field>
+      <field name="licencia">LIC-2024-003</field>
+      <field name="email">sara.piloto@dronify.com</field>
+    </record>
+    <!-- DRONES -->
+    <record id="demo_dron_alpha" model="dronify.dron">
+      <field name="name">DJI Alpha - Disponible</field>
+      <field name="capacidad_max">5.0</field>
+      <field name="bateria">100</field>
+      <field name="estado">disponible</field>
+      <field name="piloto_autorizado_ids" eval="[(6, 0, [ref('demo_piloto_ana'), ref('demo_piloto_luis')])]"/>
+    </record>
+    <record id="demo_dron_beta" model="dronify.dron">
+      <field name="name">DJI Beta - Batería Baja</field>
+      <field name="capacidad_max">3.0</field>
+      <field name="bateria">20</field>
+      <field name="estado">disponible</field>
+      <field name="piloto_autorizado_ids" eval="[(6, 0, [ref('demo_piloto_sara')])]"/>
+    </record>
+    <record id="demo_dron_gamma" model="dronify.dron">
+      <field name="name">DJI Gamma - En Mantenimiento</field>
+      <field name="capacidad_max">4.5</field>
+      <field name="bateria">50</field>
+      <field name="estado">taller</field>
+      <field name="piloto_autorizado_ids" eval="[(6, 0, [ref('demo_piloto_ana')])]"/>
+    </record>
+    <record id="demo_dron_delta" model="dronify.dron">
+      <field name="name">DJI Delta - En Vuelo</field>
+      <field name="capacidad_max">6.0</field>
+      <field name="bateria">75</field>
+      <field name="estado">en_vuelo</field>
+      <field name="piloto_autorizado_ids" eval="[(6, 0, [ref('demo_piloto_luis')])]"/>
+    </record>
+    <!-- ZONAS -->
+    <record id="demo_zona_bajo_riesgo" model="dronify.zona">
+      <field name="name">Zona Centro - Riesgo Bajo</field>
+      <field name="distancia_km">5.0</field>
+      <field name="nivel_riesgo">2</field>
+      <field name="tarifa_base">25.0</field>
+    </record>
+    <record id="demo_zona_riesgo_medio" model="dronify.zona">
+      <field name="name">Zona Suburbana - Riesgo Medio</field>
+      <field name="distancia_km">12.0</field>
+      <field name="nivel_riesgo">3</field>
+      <field name="tarifa_base">40.0</field>
+    </record>
+    <record id="demo_zona_alto_riesgo" model="dronify.zona">
+      <field name="name">Zona Industrial - Riesgo Alto</field>
+      <field name="distancia_km">20.0</field>
+      <field name="nivel_riesgo">4</field>
+      <field name="tarifa_base">60.0</field>
+    </record>
+    <!-- PAQUETES -->
+    <record id="demo_paquete_001" model="dronify.paquete">
+      <field name="name">Electrodoméstico - Aire Acondicionado</field>
+      <field name="peso">2.5</field>
+      <field name="cliente_id" ref="demo_cliente_juan"/>
+    </record>
+    <record id="demo_paquete_002" model="dronify.paquete">
+      <field name="name">Documentación Legal Urgente - VIP</field>
+      <field name="peso">0.5</field>
+      <field name="cliente_id" ref="demo_cliente_maria_vip"/>
+    </record>
+    <record id="demo_paquete_003" model="dronify.paquete">
+      <field name="name">Repuestos Industriales</field>
+      <field name="peso">1.8</field>
+      <field name="cliente_id" ref="demo_cliente_carlos"/>
+    </record>
+    <record id="demo_paquete_004" model="dronify.paquete">
+      <field name="name">Medicinas - Envío Express</field>
+      <field name="peso">0.3</field>
+      <field name="cliente_id" ref="demo_cliente_maria_vip"/>
+    </record>
+    <!-- VUELOS -->
+    <!-- Vuelo 1: En edición (sin paquetes aún) -->
+    <record id="demo_vuelo_001_edicion" model="dronify.vuelo">
+      <field name="name">20260512_Vuelo_001</field>
+      <field name="dron_id" ref="demo_dron_alpha"/>
+      <field name="piloto_id" ref="demo_piloto_ana"/>
+      <field name="zona_id" ref="demo_zona_bajo_riesgo"/>
+      <field name="preparado">False</field>
+      <field name="realizado">False</field>
+    </record>
+    <!-- Vuelo 2: En edición CON paquetes -->
+    <record id="demo_vuelo_002_con_paquetes" model="dronify.vuelo">
+      <field name="name">20260512_Vuelo_002</field>
+      <field name="dron_id" ref="demo_dron_alpha"/>
+      <field name="piloto_id" ref="demo_piloto_luis"/>
+      <field name="zona_id" ref="demo_zona_riesgo_medio"/>
+      <field name="preparado">False</field>
+      <field name="realizado">False</field>
+      <field name="paquetes_ids" eval="[(6, 0, [ref('demo_paquete_001'), ref('demo_paquete_003')])]"/>
+    </record>
+    <!-- Vuelo 3: Preparado (lista para ejecutarse) -->
+    <record id="demo_vuelo_003_preparado" model="dronify.vuelo">
+      <field name="name">20260512_Vuelo_003</field>
+      <field name="dron_id" ref="demo_dron_beta"/>
+      <field name="piloto_id" ref="demo_piloto_sara"/>
+      <field name="zona_id" ref="demo_zona_bajo_riesgo"/>
+      <field name="preparado">True</field>
+      <field name="realizado">False</field>
+      <field name="paquetes_ids" eval="[(6, 0, [ref('demo_paquete_002')])]"/>
+    </record>
+    <!-- Vuelo 4: Realizado (completado) -->
+    <record id="demo_vuelo_004_realizado" model="dronify.vuelo">
+      <field name="name">20260512_Vuelo_004</field>
+      <field name="dron_id" ref="demo_dron_delta"/>
+      <field name="piloto_id" ref="demo_piloto_luis"/>
+      <field name="zona_id" ref="demo_zona_alto_riesgo"/>
+      <field name="preparado">True</field>
+      <field name="realizado">True</field>
+      <field name="paquetes_ids" eval="[(6, 0, [ref('demo_paquete_004')])]"/>
+    </record>
+  </data>
 </odoo>

@@ -92,3 +92,11 @@ erDiagram
 + Dominios actualizados
 + Creación de códigos + nombre compute hechos
 + Datos de prueba creados (IA)
+
+# Miércoles 13/05
+
++ Agregadas restricciones de visualización en piloto y cliente dependiendo de atributos
++ Vistas con herencia de res.partner listas 
++ Info no necesaria de res.partner ocultada (falta ocultar contactos)
++ Implementados 3 botones de acción para el header del formulario de Vuelo
++ Pruebas de constraints y excepciones en la interfaz con datos demo

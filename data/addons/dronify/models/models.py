@@ -48,7 +48,7 @@ class Vuelo(models.Model):
     _name = "dronify.vuelo"
     _description = "Modelo para gestionar vuelos"
     
-    codigo = fields.Char(string="Código", compute="_get_codigo_vuelo", readonly=True)
+    codigo = fields.Char(string="Código", compute="_compute_codigo_vuelo", readonly=True)
     name = fields.Char(string="Nombre", compute="_compute_nombre_vuelo", required=True) #tiene default
     preparado = fields.Boolean(string="Preparado")
     realizado = fields.Boolean(string="Realizado")
@@ -166,7 +166,24 @@ class Vuelo(models.Model):
                 raise ValidationError("El porcentaje de batería es demasiado bajo para realizar el trayecto.")
             if vuelo.piloto_id not in vuelo.dron_id.piloto_autorizado_ids:
                 raise ValidationError("El piloto no está autorizado para realizar el vuelo.")
-    
+            vuelo.preparado = True
+            vuelo.dron_id.estado = 'en_vuelo'
+    #action para desbloquear vuelo
+    def action_desbloquear_vuelo(self):
+        for vuelo in self:
+            if vuelo.realizado:
+                raise UserError("No puede desbloquear un vuelo ya realizado.")
+            vuelo.preparado = False
+            vuelo.dron_id.estado = 'disponible'
+    #action para finalizar vuelo
+    def action_finalizar_vuelo(self):
+        for vuelo in self:
+            if not vuelo.preparado:
+                raise UserError("El vuelo debe estar preparado antes de finalizarlo.")
+            vuelo.realizado = True
+            vuelo.dron_id.bateria -= vuelo.consumo_estimado
+            vuelo.dron_id.estado = 'disponible'
+            
 class Paquete(models.Model):
     _name = "dronify.paquete"
     _description = "Modelo para gestionar paquetes"

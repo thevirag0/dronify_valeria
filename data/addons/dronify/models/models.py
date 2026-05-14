@@ -166,6 +166,8 @@ class Vuelo(models.Model):
                 raise ValidationError("El porcentaje de batería es demasiado bajo para realizar el trayecto.")
             if vuelo.piloto_id not in vuelo.dron_id.piloto_autorizado_ids:
                 raise ValidationError("El piloto no está autorizado para realizar el vuelo.")
+            if not vuelo.zona_id:
+                raise ValidationError("El vuelo debe tener una zona asociada")
             vuelo.preparado = True
             vuelo.dron_id.estado = 'en_vuelo'
     #action para desbloquear vuelo

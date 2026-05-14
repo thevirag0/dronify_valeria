@@ -100,3 +100,11 @@ erDiagram
 + Info no necesaria de res.partner ocultada (falta ocultar contactos)
 + Implementados 3 botones de acción para el header del formulario de Vuelo
 + Pruebas de constraints y excepciones en la interfaz con datos demo
+
+# Jueves 14/05
+
++ Pestaña "Contactos" de res.partner ocultada 
++ Decoraciones en Vuelo 
++ Corregir visibilidad de botones
++ Grupo en paquetes con peso_total y consumo_estimado
++ Validación de zona obligatoria en action preparar vuelo

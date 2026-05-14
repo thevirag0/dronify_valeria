@@ -6,15 +6,12 @@
       <field name="model">res.partner</field>
       <field name="inherit_id" ref="base.view_partner_form"/>
       <field name="arch" type="xml">
-        <xpath expr="//div[@name='button_box']" position="after">
-          <group>
-            <field name="es_cliente"/>
-            <field name="es_vip" invisible="not es_cliente"/>
-            <field name="es_piloto"/>
-            <field name="licencia" invisible="not es_piloto"/>
-          </group>
+        <xpath expr="//notebook" position="inside">
+          <attribute name="invisible">1</attribute>
         </xpath>
-        <!-- falta eliminar contactos -->
+        <xpath expr="//page[@name='contact_addresses']" position="attributes">
+          <attribute name="invisible">1</attribute>
+        </xpath>
         <xpath expr="//field[@name='function']" position="attributes">
           <attribute name="invisible">1</attribute>
         </xpath>
@@ -26,6 +23,16 @@
         </xpath>
         <xpath expr="//page[@name='internal_notes']" position="attributes">
           <attribute name="invisible">1</attribute>
+        </xpath>
+        <xpath expr="//notebook" position="inside">
+          <page name="clientes" string="Datos Cliente">
+            <group>
+              <field name="es_cliente"/>
+              <field name="es_vip" invisible="not es_cliente"/>
+              <field name="es_piloto"/>
+              <field name="licencia" invisible="not es_piloto" required="es_piloto"/>
+            </group>
+          </page>
         </xpath>
       </field>
     </record>
@@ -44,18 +51,12 @@
       <field name="model">res.partner</field>
       <field name="inherit_id" ref="base.view_partner_form"/>
       <field name="arch" type="xml">
-        <xpath expr="//div[@name='button_box']" position="after">
-          <group>
-            <field name="name"/>
-            <field name="es_piloto" readonly="1"/>
-            <field name="es_vip" invisible="not es_piloto"/>
-            <field name="licencia" required="es_piloto"/>
-          </group>
-          <group string="Drones autorizados">
-            <field name="dron_autorizado_ids" widget="many2many_tags"/>
-          </group>
+        <xpath expr="//notebook" position="inside">
+          <attribute name="invisible">1</attribute>
         </xpath>
-        <!-- falta eliminar contactos-->
+        <xpath expr="//page[@name='contact_addresses']" position="attributes">
+          <attribute name="invisible">1</attribute>
+        </xpath>
         <xpath expr="//field[@name='function']" position="attributes">
           <attribute name="invisible">1</attribute>
         </xpath>
@@ -67,6 +68,19 @@
         </xpath>
         <xpath expr="//page[@name='internal_notes']" position="attributes">
           <attribute name="invisible">1</attribute>
+        </xpath>
+        <xpath expr="//sheet/notebook/page[@name='internal_notes']" position="after">
+          <page name="pilotos" string="Datos Piloto" invisible="not es_piloto">
+            <group>
+              <field name="name"/>
+              <field name="es_piloto" readonly="1"/>
+              <field name="es_vip" invisible="not es_cliente"/>
+              <field name="licencia" required="es_piloto"/>
+            </group>
+            <group string="Drones autorizados" invisible="not es_piloto">
+              <field name="dron_autorizado_ids" widget="many2many_tags"/>
+            </group>
+          </page>
         </xpath>
       </field>
     </record>
@@ -85,12 +99,12 @@
       <field name="model">dronify.paquete</field>
       <field name="arch" type="xml">
         <list>
-          <field name="codigo"/>
-          <field name="name"/>
-          <field name="peso"/>
-          <field name="cliente_id"/>
-          <field name="vuelo_id"/>
-          <field name="dron_relacionado"/>
+          <field name="codigo" readonly="1"/>
+          <field name="name" readonly="1"/>
+          <field name="peso" readonly="1"/>
+          <field name="cliente_id" readonly="1"/>
+          <field name="vuelo_id" readonly="1"/>
+          <field name="dron_relacionado" readonly="1"/>
         </list>
       </field>
     </record>
@@ -152,7 +166,8 @@
       <field name="name">dronify.vuelo.list</field>
       <field name="model">dronify.vuelo</field>
       <field name="arch" type="xml">
-        <list>
+        <list decoration-danger="realizado"
+              decoration-success="preparado and not realizado">
           <field name="codigo"/>
           <field name="name"/>
           <field name="dron_id"/>
@@ -178,8 +193,8 @@
       <field name="arch" type="xml">
         <form>
           <header>
-            <button name="action_preparar_vuelo" string="Preparar Vuelo" type="object"/>
-            <button name="action_desbloquear_vuelo" string="Desbloquear Vuelo" type="object"/>
+            <button name="action_preparar_vuelo" string="Preparar Vuelo" type="object" class="btn-primary" invisible="preparado or realizado" />
+            <button name="action_desbloquear_vuelo" string="Desbloquear Vuelo" type="object" invisible="realizado"/>
             <button name="action_finalizar_vuelo" string="Finalizar Vuelo" type="object"/>
           </header>
           <sheet>
@@ -193,12 +208,14 @@
             <group string="Estado y Control">
               <field name="preparado" readonly="1"/>
               <field name="realizado" readonly="1"/>
-              <field name="peso_total" readonly="1"/>
-              <field name="consumo_estimado" readonly="1"/>
             </group>
             <notebook>
               <page string="Paquetes">
                 <field name="paquetes_ids" readonly="preparado"/>
+                <group string="Totales">
+                  <field name="peso_total" readonly="1"/>
+                  <field name="consumo_estimado" readonly="1"/>
+                </group>
               </page>
             </notebook>
           </sheet>

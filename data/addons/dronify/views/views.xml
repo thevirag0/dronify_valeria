@@ -36,13 +36,25 @@
         </xpath>
       </field>
     </record>
+    <!-- VISTA CLIENTE - LIST -->
+    <record id="dronify_cliente_list" model="ir.ui.view">
+      <field name="name">dronify.cliente.list</field>
+      <field name="model">res.partner</field>
+      <field name="arch" type="xml">
+        <list>
+          <field name="name"/>
+          <field name="es_cliente" widget="boolean" class="text-center"/>
+          <field name="es_vip" widget="boolean" class="text-center"/>
+        </list>
+      </field>
+    </record>
     <!-- ACTION CLIENTE -->
     <record id="dronify_cliente_action" model="ir.actions.act_window">
       <field name="name">Clientes</field>
       <field name="res_model">res.partner</field>
-      <field name="view_mode">form</field>
+      <field name="view_mode">list,form</field>
       <field name="domain">[('es_cliente', '=', True)]</field>
-      <field name="view_id" ref="dronify_cliente_form"/>
+      <field name="view_id" ref="dronify_cliente_list"/>
       <field name="context">{'default_es_cliente': True}</field>
     </record>
     <!-- VISTA PILOTO - FORM -->
@@ -84,13 +96,26 @@
         </xpath>
       </field>
     </record>
+    <!-- VISTA PILOTO - LIST -->
+    <record id="dronify_piloto_list" model="ir.ui.view">
+      <field name="name">dronify.piloto.list</field>
+      <field name="model">res.partner</field>
+      <field name="arch" type="xml">
+        <list>
+          <field name="name"/>
+          <field name="es_piloto" widget="boolean" class="text-center"/>
+          <field name="licencia"/>
+          <field name="dron_autorizado_ids" widget="many2many_tags"/>
+        </list>
+      </field>
+    </record>
     <!-- ACTION PILOTO -->
     <record id="dronify_piloto_action" model="ir.actions.act_window">
       <field name="name">Piloto</field>
       <field name="res_model">res.partner</field>
-      <field name="view_mode">form</field>
+      <field name="view_mode">list,form</field>
       <field name="domain">[('es_piloto', '=', True)]</field>
-      <field name="view_id" ref="dronify_piloto_form"/>
+      <field name="view_id" ref="dronify_piloto_list"/>
       <field name="context">{'default_es_piloto': True}</field>
     </record>
     <!-- VISTA PAQUETE -->
@@ -130,11 +155,32 @@
         </list>
       </field>
     </record>
+    <!-- VISTA DRON - FORM -->
+    <record id="dronify_dron_form" model="ir.ui.view">
+      <field name="name">dronify.dron.form</field>
+      <field name="model">dronify.dron</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group string="Edición de Dron">
+              <field name="name"/>
+              <field name="capacidad_max" />
+              <field name="bateria" widget="progressbar"/>
+              <field name="estado"/>
+              <field name="vuelo_ids" widget="one2many"/>
+            </group>
+            <group string="Pilotos autorizados">
+              <field name="piloto_autorizado_ids" widget="many2many"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
     <!-- ACTION DRON -->
     <record id="dronify_dron_action" model="ir.actions.act_window">
       <field name="name">Drones</field>
       <field name="res_model">dronify.dron</field>
-      <field name="view_mode">list</field>
+      <field name="view_mode">list,form</field>
       <field name="view_id" ref="dronify_dron_list"/>
     </record>
     <!-- VISTA ZONA - list -->
@@ -154,11 +200,29 @@
         </list>
       </field>
     </record>
+    <!-- VISTA ZONA - FORM -->
+    <record id="dronify_zona_form" model="ir.ui.view">
+      <field name="name">dronify.zona.form</field>
+      <field name="model">dronify.zona</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group string="Edición de Zona">
+              <field name="name"/>
+              <field name="distancia_km" />
+              <field name="nivel_riesgo"/>
+              <field name="tarifa_base"/>
+              <field name="vuelo_ids" widget="one2many"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
     <!-- ACTION ZONA -->
     <record id="dronify_zona_action" model="ir.actions.act_window">
       <field name="name">Zonas</field>
       <field name="res_model">dronify.zona</field>
-      <field name="view_mode">list</field>
+      <field name="view_mode">list,form</field>
       <field name="view_id" ref="dronify_zona_list"/>
     </record>
     <!-- VISTA VUELOS - list -->

@@ -16,6 +16,7 @@ Long description of module's purpose
     'category': 'Uncategorized',
     'version': '0.1',
     'application': True,
+    'sequence': -1,
     # any module necessary for this one to work correctly
     'depends': ['base'],
     'images': ['static/description/icon.png'],

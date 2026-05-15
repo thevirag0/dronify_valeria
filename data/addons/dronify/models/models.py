@@ -33,7 +33,7 @@ class Dron(models.Model):
     capacidad_max = fields.Float(string="Capacidad de Carga máxima(kg)", required=True)
     bateria = fields.Integer(string="Batería disponible (%)", default=100)
     estado = fields.Selection([('disponible', 'Disponible'), ('taller', 'En Mantenimiento'), ('en_vuelo', 'En Vuelo')], string="Estado", default='disponible')
-    piloto_autorizado_ids = fields.Many2many('res.partner', 'rel_partner_dron', 'dron_id', 'partner_id', string="Pilotos autorizados")
+    piloto_autorizado_ids = fields.Many2many('res.partner', 'rel_partner_dron', 'dron_id', 'partner_id', string="Pilotos autorizados", domain=[('es_piloto', '=', True)])
     vuelo_ids = fields.One2many('dronify.vuelo', 'dron_id', string='Vuelos')
     
     #constraint para controlar que el valor de la batería sea positivo
@@ -55,7 +55,7 @@ class Vuelo(models.Model):
     peso_total = fields.Float(string="Peso total", compute="_compute_peso_total", store=True) #computado
     consumo_estimado = fields.Float(string="Consumo estimado", compute="_compute_consumo_estimado", store=True) #computado
     dron_id = fields.Many2one('dronify.dron',string= "Dron asignado", required=True)
-    piloto_id= fields.Many2one('res.partner', string="Piloto responsable", required=True) #required solo pilotos
+    piloto_id= fields.Many2one('res.partner', string="Piloto responsable", required=True, domain=[('es_piloto', '=', True)])#required solo pilotos
     paquetes_ids = fields.One2many('dronify.paquete', 'vuelo_id', string="Paquetes")
     zona_id = fields.Many2one('dronify.zona', string="Zona asignada", required=True)
     
@@ -191,9 +191,9 @@ class Paquete(models.Model):
     _description = "Modelo para gestionar paquetes"
     
     codigo = fields.Char(string="Código", compute="_compute_codigo_paquete", readonly=True) #autogenerado
-    name = fields.Char(string="Nombre", required=True)
-    peso = fields.Float(string="Peso", required=True)
-    cliente_id = fields.Many2one('res.partner', string="Cliente", required=True)
+    name = fields.Char(string="Nombre")
+    peso = fields.Float(string="Peso")
+    cliente_id = fields.Many2one('res.partner', string="Cliente", domain=[('es_cliente', '=', True)])
     vuelo_id = fields.Many2one('dronify.vuelo', string="Vuelo", readonly=True)
     dron_relacionado = fields.Char(string="Nombre del dron relacionado", related='vuelo_id.dron_id.name', readonly=True) #computado
     

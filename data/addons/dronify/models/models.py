@@ -2,6 +2,8 @@ from odoo import models, fields, api
 from . import logica_dronify
 from odoo.exceptions import ValidationError, UserError
 import logging
+from datetime import datetime
+
 
 _logger = logging.getLogger(__name__)
 
@@ -10,7 +12,7 @@ class Cliente(models.Model):
     _description = "Modelo para gestionar los clientes de Dronify"
     
     name = fields.Char(string="Nombre del cliente")
-    es_cliente = fields.Boolean(string="Cliente", default=True)
+    es_cliente = fields.Boolean(string="Cliente", default=True, required=True)
     es_vip = fields.Boolean(string="VIP")
     es_piloto = fields.Boolean(string="Piloto")
     licencia = fields.Char(string="Licencia de Piloto") #obligatorio para pilotos
@@ -24,6 +26,11 @@ class Cliente(models.Model):
                 raise ValidationError(
                     f"Error: El piloto {cliente.name} debe tener una licencia asignada."
                 )
+    @api.constrains('es_cliente', 'es_piloto')
+    def _validar_cliente_o_piloto(self):
+        for rec in self:
+            if not rec.es_cliente and not rec.es_piloto:
+                raise ValidationError("El contacto debe ser Cliente o Piloto (al menos uno).")
                 
 class Dron(models.Model):
     _name = "dronify.dron"
@@ -42,8 +49,11 @@ class Dron(models.Model):
         for dron in self:
             if dron.bateria < 0 or dron.bateria > 100:
                 raise ValidationError("Error: La batería debe estar entre 0% y 100%")
-    
-            
+    #action para recargar batería al 100%
+    def action_recargar_bateria(self):
+        for dron in self:
+            dron.bateria = 100
+
 class Vuelo(models.Model):
     _name = "dronify.vuelo"
     _description = "Modelo para gestionar vuelos"
@@ -100,7 +110,6 @@ class Vuelo(models.Model):
         for vuelo in self:
             if vuelo.preparado and vuelo.peso_total > vuelo.dron_id.capacidad_max:
                 raise ValidationError("Error: El peso de la mercancía supera la capacidad máxima del dron.")   
-     
     #constraint para comprobar que la bateria es suficiente segun lo estimado   
     @api.constrains('preparado', 'consumo_estimado', 'dron_id')
     def _validar_bateria_suficiente(self):
@@ -145,7 +154,7 @@ class Vuelo(models.Model):
     @api.depends()
     def _compute_codigo_vuelo(self):
         for vuelo in self:
-            vuelo.codigo = fields.Date.context_today(self).strftime('%Y%m%d%H%M%S')
+            vuelo.codigo = datetime.now().strftime('%Y%m%d%H%M%S')
     
     #metodo para computar nombre
     @api.depends()
@@ -189,37 +198,14 @@ class Vuelo(models.Model):
 class Paquete(models.Model):
     _name = "dronify.paquete"
     _description = "Modelo para gestionar paquetes"
-    
-    codigo = fields.Char(string="Código", compute="_compute_codigo_paquete", readonly=True) #autogenerado
-    name = fields.Char(string="Nombre")
-    peso = fields.Float(string="Peso")
-    cliente_id = fields.Many2one('res.partner', string="Cliente", domain=[('es_cliente', '=', True)])
+
+    codigo = fields.Char(string="Código", readonly=True, default=lambda self: __import__('datetime').datetime.now().strftime('%Y%m%d%H%M%S'))    
+    name = fields.Char(string="Nombre", store=True, required=True)
+    peso = fields.Float(string="Peso", store=True, required=True)
+    cliente_id = fields.Many2one('res.partner', string="Cliente", domain=[('es_cliente', '=', True)], store=True, required=True)
     vuelo_id = fields.Many2one('dronify.vuelo', string="Vuelo", readonly=True)
-    dron_relacionado = fields.Char(string="Nombre del dron relacionado", related='vuelo_id.dron_id.name', readonly=True) #computado
-    
-    #constraint para comprobar que el contacto es cliente -- preguntar si SOLO tiene que ser cliente o pilotos tambien pueden
-    @api.constrains('cliente_id', 'cliente_id.es_cliente')
-    def _validar_cliente_id(self):
-        for paquete in self:
-            if paquete.cliente_id and not paquete.cliente_id.es_cliente:
-                raise ValidationError(
-                    f"Error: El cliente {paquete.cliente_id.name} debe tener un registro como cliente."
-                )
-    #constraint para controlar que el peso del paquete sea un numero positivo
-    @api.constrains('peso')
-    def _validar_peso(self):
-        for paquete in self:
-            if paquete.peso <= 0:
-                raise ValidationError(
-                    f"Error: El paquete con código {paquete.codigo} no tiene un peso válido."
-                )
-                
-    #campo computado para generar códigos
-    @api.depends()
-    def _compute_codigo_paquete(self):
-        for paquete in self:
-            paquete.codigo = fields.Date.context_today(self).strftime('%Y%m%d%H%M%S')
-                
+    dron_relacionado = fields.Char(string="Nombre del dron relacionado", related='vuelo_id.dron_id.name', readonly=True)
+                    
 class Zona(models.Model):
     _name = "dronify.zona"
     _description = "Modelo para gestionar zonas"
@@ -235,6 +221,6 @@ class Zona(models.Model):
     def _validar_distancia_positiva(self):
         for zona in self:
             if zona.distancia_km <= 0:
-                 raise ValidationError(
+                raise ValidationError(
                     f"Error: La distancia debe ser un número positivo."
                 )

@@ -43,8 +43,9 @@
       <field name="arch" type="xml">
         <list>
           <field name="name"/>
-          <field name="es_cliente" widget="boolean" class="text-center"/>
-          <field name="es_vip" widget="boolean" class="text-center"/>
+          <field name="es_cliente" widget="boolean_toggle" class="text-center"/>
+          <field name="es_vip" widget="boolean_toggle" class="text-center"/>
+          <field name="es_piloto" widget="boolean_toggle" class="text-center"/>
         </list>
       </field>
     </record>
@@ -103,7 +104,7 @@
       <field name="arch" type="xml">
         <list>
           <field name="name"/>
-          <field name="es_piloto" widget="boolean" class="text-center"/>
+          <field name="es_piloto" widget="boolean_toggle" class="text-center"/>
           <field name="licencia"/>
           <field name="dron_autorizado_ids" widget="many2many_tags"/>
         </list>
@@ -118,7 +119,35 @@
       <field name="view_id" ref="dronify_piloto_list"/>
       <field name="context">{'default_es_piloto': True}</field>
     </record>
-    <!-- VISTA PAQUETE -->
+    <!-- VISTA PAQUETE - LIST PARA VUELO -->
+    <record id="dronify_paquete_tree_edit" model="ir.ui.view">
+      <field name="name">dronify.paquete.tree.edit</field>
+      <field name="model">dronify.paquete</field>
+      <field name="arch" type="xml">
+        <list editable="bottom">
+          <field name="codigo" readonly="1"/>
+          <field name="name" required="1"/>
+          <field name="peso" required="1"/>
+          <field name="cliente_id" required="1" domain="[('es_cliente', '=', True)]"/>
+        </list>
+      </field>
+    </record>
+    <!-- VISTA PAQUETE - FORM  PARA VUELO -->
+    <record id="dronify_paquete_form" model="ir.ui.view">
+      <field name="name">dronify.paquete.form</field>
+      <field name="model">dronify.paquete</field>
+      <field name="arch" type="xml">
+        <form>
+          <group>
+            <field name="codigo" readonly="1"/>
+            <field name="name" required="1"/>
+            <field name="peso" required="1"/>
+            <field name="cliente_id" required="1" domain="[('es_cliente', '=', True)]"/>
+          </group>
+        </form>
+      </field>
+    </record>
+    <!-- VISTA PAQUETE - LIST -->
     <record id="dronify_paquete_list" model="ir.ui.view">
       <field name="name">dronify.paquete.list</field>
       <field name="model">dronify.paquete</field>
@@ -151,7 +180,7 @@
           <field name="name"/>
           <field name="capacidad_max"/>
           <field name="bateria" widget="progressbar"/>
-          <field name="estado" widget="badge"/>
+          <field name="estado" widget="badge" options="{'colors': {'disponible': 'success', 'taller': 'warning', 'en_vuelo': 'info'}}"/>
         </list>
       </field>
     </record>
@@ -162,15 +191,23 @@
       <field name="arch" type="xml">
         <form>
           <sheet>
-            <group string="Edición de Dron">
+            <group string="Información del Dron">
               <field name="name"/>
-              <field name="capacidad_max" />
-              <field name="bateria" widget="progressbar"/>
-              <field name="estado"/>
-              <field name="vuelo_ids" widget="one2many"/>
+              <field name="capacidad_max"/>
+              <!--
+              <field name="estado" widget="badge" options="{'colors': {'disponible': 'success', 'taller': 'warning', 'en_vuelo': 'info'}}"/>
+                -->
+              <field name="estado" widget="statusbar" options="{'clickable': 1}"/>
+            </group>
+            <group string="Batería">
+              <field name="bateria"/>
+              <field name="bateria" string=" " widget="progressbar"/>
             </group>
             <group string="Pilotos autorizados">
-              <field name="piloto_autorizado_ids" widget="many2many"/>
+              <field name="piloto_autorizado_ids" widget="many2many_tags"/>
+            </group>
+            <group string="Historial de vuelos" colspan="2">
+              <field name="vuelo_ids" widget="one2many_list"/>
             </group>
           </sheet>
         </form>
@@ -196,7 +233,7 @@
           <field name="name"/>
           <field name="distancia_km"/>
           <field name="nivel_riesgo" widget="badge"/>
-          <field name="tarifa_base"/>
+          <field name="tarifa_base" string="Tarifa base (€)" widget="float" />
         </list>
       </field>
     </record>
@@ -207,12 +244,14 @@
       <field name="arch" type="xml">
         <form>
           <sheet>
-            <group string="Edición de Zona">
-              <field name="name"/>
-              <field name="distancia_km" />
-              <field name="nivel_riesgo"/>
-              <field name="tarifa_base"/>
-              <field name="vuelo_ids" widget="one2many"/>
+            <group string="Información">
+              <field name="name" string="Nombre"/>
+              <field name="distancia_km" string="Distancia (km)" widget="numeric_step"/>
+              <field name="nivel_riesgo" string="Riesgo" widget="radio"/>
+              <field name="tarifa_base" string="Tarifa base (€)" widget="float"/>
+            </group>
+            <group string="Historial de vuelos de la zona" colspan="2">
+              <field name="vuelo_ids" widget="one2many_list"/>
             </group>
           </sheet>
         </form>
@@ -238,8 +277,8 @@
           <field name="piloto_id"/>
           <field name="peso_total"/>
           <field name="consumo_estimado" widget="percentpie"/>
-          <field name="preparado" widget="boolean" class="text-center"/>
-          <field name="realizado" widget="boolean" class="text-center"/>
+          <field name="preparado" widget="boolean_toggle" class="text-center"/>
+          <field name="realizado" widget="boolean_toggle" class="text-center"/>
         </list>
       </field>
     </record>
@@ -257,9 +296,15 @@
       <field name="arch" type="xml">
         <form>
           <header>
-            <button name="action_preparar_vuelo" string="Preparar Vuelo" type="object" class="btn-primary" invisible="preparado or realizado" />
-            <button name="action_desbloquear_vuelo" string="Desbloquear Vuelo" type="object" invisible="realizado"/>
-            <button name="action_finalizar_vuelo" string="Finalizar Vuelo" type="object"/>
+            <button name="action_preparar_vuelo" string="Preparar Vuelo" type="object" class="btn-primary" invisible="preparado or realizado">
+              <i class="fa fa-paper-plane me-1"/>Preparar Vuelo
+            </button>
+            <button name="action_desbloquear_vuelo" string="Desbloquear Vuelo" type="object" class="btn-warning" invisible="realizado">
+              <i class="fa fa-undo me-1"/>Desbloquear Vuelo
+            </button>
+            <button name="action_finalizar_vuelo" string="Finalizar Vuelo" type="object" class="btn-success" invisible="realizado or not preparado">
+              <i class="fa fa-flag-checkered me-1"/>Finalizar Vuelo
+            </button>
           </header>
           <sheet>
             <group string="Planificación">
@@ -270,16 +315,14 @@
               <field name="zona_id" readonly="preparado"/>
             </group>
             <group string="Estado y Control">
-              <field name="preparado" readonly="1"/>
-              <field name="realizado" readonly="1"/>
+              <field name="preparado" widget="checkbox" readonly="1"/>
+              <field name="realizado" widget="checkbox" readonly="1"/>
+              <field name="peso_total" readonly="1"/>
+              <field name="consumo_estimado" readonly="1"/>
             </group>
             <notebook>
               <page string="Paquetes">
-                <field name="paquetes_ids" readonly="preparado"/>
-                <group string="Totales">
-                  <field name="peso_total" readonly="1"/>
-                  <field name="consumo_estimado" readonly="1"/>
-                </group>
+                <field name="paquetes_ids" readonly="preparado" mode="list,form" context="{'list_view_ref': 'dronify.dronify_paquete_tree_edit', 'form_view_ref': 'dronify.dronify_paquete_form'}"/>
               </page>
             </notebook>
           </sheet>

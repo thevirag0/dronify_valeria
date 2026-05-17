@@ -93,7 +93,7 @@ erDiagram
 + Creación de códigos + nombre compute hechos
 + Datos de prueba creados (IA)
 
-# Miércoles 13/05
+## Miércoles 13/05
 
 + Agregadas restricciones de visualización en piloto y cliente dependiendo de atributos
 + Vistas con herencia de res.partner listas 
@@ -101,10 +101,21 @@ erDiagram
 + Implementados 3 botones de acción para el header del formulario de Vuelo
 + Pruebas de constraints y excepciones en la interfaz con datos demo
 
-# Jueves 14/05
+## Jueves 14/05
 
-+ Pestaña "Contactos" de res.partner ocultada 
++ Pestaña contactos de res.partner ocultada 
 + Decoraciones en Vuelo 
 + Corregir visibilidad de botones
 + Grupo en paquetes con peso_total y consumo_estimado
 + Validación de zona obligatoria en action preparar vuelo
+
+## Viernes 15, Sábado 16, Domingo 17 -- Revisión final 
+
++ Creación de vistas de edición para Dron, Zona y Paquete
++ Solucionado el problema de creación de paquetes en el vuelo: Se implementó una solución de edición inline en tabla con referencia directa a las vistas de paquete.
++ Arreglado problema de visualización de peso total de carga en vista de lista de Vuelos
++ Añadida feature para cargar la batería de los drones
++ Añadidos múltiples widgets para hacer más agradable la UI 
++ Arreglado problema de constraint en Cliente (añadido required y api.constrains para validar que el usuario sea cliente, piloto o ambos)
+
+Proyecto finalizado.
